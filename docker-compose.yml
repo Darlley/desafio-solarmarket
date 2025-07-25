@@ -1,0 +1,23 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    restart: no
+    env_file:
+      - .env
+    ports:
+      - "3306:3306"
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: "no"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
