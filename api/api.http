@@ -1,0 +1,43 @@
+@baseUrl = http://localhost:3000
+
+
+###
+
+GET {{baseUrl}} HTTP/1.1
+
+###
+
+GET {{baseUrl}}/books HTTP/1.1
+
+###
+
+# @name createdContact
+POST {{baseUrl}}/books HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "O Senhor dos Anéis: A Sociedade do Anel",
+  "author": "J.R.R. Tolkien",
+  "description": "O volume inicial de O Senhor dos Anéis, lançado originalmente em julho de 1954, foi o primeiro grande épico de fantasia moderno, conquistando milhões de leitores e se tornando o padrão de referência para todas as outras obras do gênero até hoje. A imaginação prodigiosa de J.R.R. Tolkien e seu conhecimento profundo das antigas mitologias da Europa permitiram que ele criasse um universo tão complexo e convincente quanto o mundo real. A Sociedade do Anel começa no Condado, a região rural do oeste da Terra-média onde vivem os diminutos e pacatos hobbits. Bilbo Bolseiro, um dos raros aventureiros desse povo, cujas peripécias foram contadas em O Hobbit, resolve ir embora do Condado e deixa sua considerável herança nas mãos de seu jovem parente Frodo. O mais importante legado de Bilbo é o anel mágico que costumava usar para se tornar invisível. No entanto, o mago Gandalf, companheiro de aventuras do velho hobbit, revela a Frodo que o objeto é o Um Anel, a raiz do poder demoníaco de Sauron, o Senhor Sombrio, que deseja escravizar todos os povos da Terra-média. A única maneira de eliminar a ameaça de Sauron é destruir o Um Anel nas entranhas da própria montanha de fogo onde foi forjado. A revelação faz com que Frodo e seus companheiros hobbits Sam, Merry e Pippin deixem a segurança do Condado e iniciem uma perigosa jornada rumo ao leste. Ao lado de representantes dos outros Povos Livres que resistem ao Senhor Sombrio, eles formam a Sociedade do Anel. Alguém uma vez disse que o mundo dos leitores de língua inglesa se divide entre os que já leram O Senhor dos Anéis e os que um dia lerão o livro. Com esta nova tradução da obra, o fascínio dessa aventura atemporal ficará ainda mais evidente para os leitores brasileiros, tanto os que já conhecem a saga como os que estão prestes a descobrir seu encanto.",
+  "isbn": "9788595084759",
+  "publicationDate": "2019-03-19T14:30:00-03:00",
+  "genre": "fantasia",
+  "language": "pt-br",
+  "coverUrl": "https://m.media-amazon.com/images/I/81hCVEC0ExL._SY466_.jpg"
+}
+
+###
+@contactId = {{ createdContact.response.body.id }}
+###
+
+PATCH {{baseUrl}}/books/{{contactId}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "nome": "Darlley brito",
+  "telefone": "5567999999998"
+}
+
+###
+
+DELETE {{baseUrl}}/books/{{contactId}} HTTP/1.1
