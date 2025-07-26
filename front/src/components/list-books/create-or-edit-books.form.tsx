@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils"
 
 import { z } from "zod"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Cropper, CropperCropArea, CropperDescription, CropperImage } from "../ui/cropper"
 
 export const bookSchema = z.object({
   title: z.string().min(1, "Título é obrigatório."),
@@ -44,6 +45,7 @@ interface BookEditorProps {
 }
 
 export default function CreateOrEditBookForm({ initialData, isEditing = false, onSave }: BookEditorProps) {
+
   const [date, setDate] = useState<Date | undefined>(
     initialData?.publicationDate ? new Date(initialData.publicationDate) : undefined,
   )
@@ -103,13 +105,15 @@ export default function CreateOrEditBookForm({ initialData, isEditing = false, o
     }
   }
 
+  const [previewImage, setPreviewImage] = useState<string>("")
+
   return (
     <Dialog>
-      <form onSubmit={form.handleSubmit(onSubmit)} >
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTrigger asChild>
           <Button variant="outline">Criar livro</Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-11/12">
+        <DialogContent className="sm:max-w-11/12 max-h-[90%] scroll-y-auto overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Cadastro</DialogTitle>
             <DialogDescription>
@@ -298,11 +302,42 @@ export default function CreateOrEditBookForm({ initialData, isEditing = false, o
                       onChange={(e) => {
                         const file = e.target.files?.[0]
                         if (file) {
-                          // Aqui você implementaria o upload da imagem
-                          console.log("Arquivo selecionado:", file)
+                          const reader = new FileReader()
+                          reader.onload = (e) => {
+                            if (e.target?.result) {
+                              setPreviewImage(e.target.result as string)
+                            }
+                          }
+                          reader.readAsDataURL(file)
+                          // podemos armazenar o File ou a imagem base64 posteriormente após o crop
                         }
                       }}
                     />
+
+                    {previewImage && (
+                      <div className="space-y-2">
+                        <Label>Ajuste sua imagem</Label>
+                        <Cropper
+                          className="h-80 w-full rounded-lg border"
+                          image={previewImage}
+                          aspectRatio={3 / 4}
+                          minZoom={1}
+                          maxZoom={3}
+                          onCropChange={(data: any) => {
+                            if (data) {
+                              form.setValue("coverUrl", data)
+                            }
+                          }}
+                        >
+                          <CropperDescription />
+                          <CropperImage />
+                          <CropperCropArea />
+                        </Cropper>
+                        <p className="text-sm text-muted-foreground">
+                          Arraste para ajustar e use o scroll do mouse para zoom
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </TabsContent>
               </Tabs>
