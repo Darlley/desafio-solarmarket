@@ -129,7 +129,7 @@ const data: Book[] = [
   }
 ]
 
-export const columns: ColumnDef<Book>[] = [
+const columns: ColumnDef<Book>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -288,7 +288,7 @@ export function ListBooksTable() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between py-4">
+      <div className="flex items-center justify-between py-4 gap-4">
         <Input
           placeholder="Filtrar por título..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -297,40 +297,7 @@ export function ListBooksTable() {
           }
           className="max-w-sm"
         />
-        <div className="flex items-center space-x-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Colunas <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id === "title" && "Título"}
-                      {column.id === "author" && "Autor"}
-                      {column.id === "genre" && "Gênero"}
-                      {column.id === "isbn" && "ISBN"}
-                      {column.id === "publicationDate" && "Data de Publicação"}
-                      {column.id === "language" && "Idioma"}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <CreateOrEditBookForm />
-        </div>
+        <CreateOrEditBookForm />
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>

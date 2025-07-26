@@ -11,11 +11,11 @@ export default function Home() {
   ]
 
   return (
-    <div className="w-full h-dvh grid grid-cols-12 gap-4">
-      <div className="col-span-4 flex items-center justify-center p-8">
+    <div className="w-full h-dvh grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div className="flex items-center justify-center col-span-1 lg:col-span-6 xl:col-span-4  p-8">
         <CardSwipe images={images} autoplayDelay={3000} slideShadows={false} />
       </div>
-      <div className="col-span-8 p-8">
+      <div className="flex items-center justify-center col-span-1 lg:col-span-6 xl:col-span-8 p-8 ">
         <ListBooksTable />
       </div>
     </div>

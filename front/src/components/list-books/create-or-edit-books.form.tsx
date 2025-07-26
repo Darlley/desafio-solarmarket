@@ -22,6 +22,7 @@ import { cn } from "@/lib/utils"
 import { z } from "zod"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Cropper, CropperCropArea, CropperDescription, CropperImage } from "../ui/cropper"
+import { ShinyButton } from "../magicui/shiny-button"
 
 export const bookSchema = z.object({
   title: z.string().min(1, "Título é obrigatório."),
@@ -111,7 +112,7 @@ export default function CreateOrEditBookForm({ initialData, isEditing = false, o
     <Dialog>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogTrigger asChild>
-          <Button variant="outline">Criar livro</Button>
+          <ShinyButton className="text-nowrap">Criar livro</ShinyButton>
         </DialogTrigger>
         <DialogContent className="sm:max-w-11/12 max-h-[90%] scroll-y-auto overflow-y-auto">
           <DialogHeader>
