@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('./css/tip-tap.css');
 
 @custom-variant dark (&:is(.dark *));
 

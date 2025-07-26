@@ -123,8 +123,8 @@ export const CardSwipe: React.FC<CarouselProps> = ({
 
           <div className="flex flex-col justify-center pb-2 pl-4 pt-14 md:items-center">
             <div className="flex gap-2">
-            <ShinyButton>Deletar</ShinyButton>
-            <RippleButton>Deletar</RippleButton>
+              <ShinyButton>Anterior</ShinyButton>
+              <ShinyButton>Próximo</ShinyButton>
             </div>
           </div>
         </div>

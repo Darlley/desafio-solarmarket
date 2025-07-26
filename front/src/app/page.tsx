@@ -1,4 +1,7 @@
+import CreateOrEditBooksForm from "@/components/list-books/create-or-edit-books.form";
+import { ListBooksTable } from "@/components/list-books/list-books.table";
 import { CardSwipe } from "@/components/ui/card-swipe";
+import { useState } from "react";
 
 export default function Home() {
   const images = [
@@ -8,8 +11,13 @@ export default function Home() {
   ]
 
   return (
-    <div className="w-full h-dvh flex items-center justify-center">
-      <CardSwipe images={images} autoplayDelay={3000} slideShadows={false} />
+    <div className="w-full h-dvh grid grid-cols-12 gap-4">
+      <div className="col-span-4 flex items-center justify-center p-8">
+        <CardSwipe images={images} autoplayDelay={3000} slideShadows={false} />
+      </div>
+      <div className="col-span-8 p-8">
+        <ListBooksTable />
+      </div>
     </div>
   );
 }
