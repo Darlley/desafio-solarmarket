@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -35,123 +34,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import CreateOrEditBookForm from "./create-or-edit-books.form"
-
-export type Book = {
-  title: string
-  author: string
-  description?: string
-  isbn: string
-  publicationDate: string
-  genre: string
-  language: string
-  coverUrl?: string
-}
-
-const data: Book[] = [
-  {
-    title: "Dom Casmurro",
-    author: "Machado de Assis",
-    description: "Romance clássico da literatura brasileira",
-    isbn: "9788520925485",
-    publicationDate: "1899-12-01",
-    genre: "Romance",
-    language: "Português",
-    coverUrl: "https://example.com/dom-casmurro.jpg"
-  },
-  {
-    title: "O Pequeno Príncipe",
-    author: "Antoine de Saint-Exupéry",
-    description: "Fábula poética sobre amizade e amor",
-    isbn: "9788525412157",
-    publicationDate: "1943-04-06",
-    genre: "Fábula",
-    language: "Português",
-    coverUrl: "https://example.com/pequeno-principe.jpg"
-  },
-  {
-    title: "1984",
-    author: "George Orwell",
-    description: "Distopia clássica sobre totalitarismo",
-    isbn: "9788535914849",
-    publicationDate: "1949-06-08",
-    genre: "Ficção Científica",
-    language: "Português",
-    coverUrl: "https://example.com/1984.jpg"
-  },
-  {
-    title: "O Cortiço",
-    author: "Aluísio Azevedo",
-    description: "Romance naturalista brasileiro",
-    isbn: "9788594318817",
-    publicationDate: "1890-06-15",
-    genre: "Romance",
-    language: "Português"
-  },
-  {
-    title: "Harry Potter e a Pedra Filosofal",
-    author: "J.K. Rowling",
-    description: "Primeiro livro da saga do bruxinho",
-    isbn: "9788532511010",
-    publicationDate: "1997-06-26",
-    genre: "Fantasia",
-    language: "Português",
-    coverUrl: "https://example.com/harry-potter.jpg"
-  },
-  {
-    title: "Cem Anos de Solidão",
-    author: "Gabriel García Márquez",
-    description: "Obra-prima do realismo mágico",
-    isbn: "9788535925364",
-    publicationDate: "1967-05-30",
-    genre: "Realismo Mágico",
-    language: "Português"
-  },
-  {
-    title: "O Hobbit",
-    author: "J.R.R. Tolkien",
-    description: "Aventura épica na Terra Média",
-    isbn: "9788595084759",
-    publicationDate: "1937-09-21",
-    genre: "Fantasia",
-    language: "Português",
-    coverUrl: "https://example.com/hobbit.jpg"
-  },
-  {
-    title: "Quincas Borba",
-    author: "Machado de Assis",
-    description: "Romance brasileiro do século XIX",
-    isbn: "9788520923467",
-    publicationDate: "1891-01-01",
-    genre: "Romance",
-    language: "Português"
-  }
-]
+import { Book } from "@/types/book.type"
+import useBooks from "@/hooks/use-books"
 
 const columns: ColumnDef<Book>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -267,8 +154,9 @@ export function ListBooksTable() {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
+  const { data } = useBooks()
   const table = useReactTable({
-    data,
+    data: data ?? [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

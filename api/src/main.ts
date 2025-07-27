@@ -13,6 +13,13 @@ async function bootstrap() {
     }),
   );
 
+  // Permitir requisições do frontend na porta 3001
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+    credentials: true,
+  });
+
   await app.listen(3000);
 }
 bootstrap();

@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import { Swiper, SwiperSlide } from "swiper/react"
 
@@ -13,11 +13,11 @@ import { SparklesIcon } from "lucide-react"
 import { Autoplay, Navigation, Pagination } from "swiper/modules"
 
 import { Badge } from "@/components/ui/badge"
-import { ShinyButton } from "../magicui/shiny-button"
-import { RippleButton } from "../magicui/ripple-button"
+import useBooks from "@/hooks/use-books"
+import { Book } from "@/types/book.type"
 
 interface CarouselProps {
-  images: { src: string; alt: string }[]
+  images?: { src: string; alt: string }[]
   autoplayDelay?: number
   slideShadows: boolean
 }
@@ -27,6 +27,9 @@ export const CardSwipe: React.FC<CarouselProps> = ({
   autoplayDelay = 1500,
   slideShadows = false,
 }) => {
+  const { data, isLoading, error } = useBooks()
+  const [currentBookIndex, setCurrentBookIndex] = useState(0)
+
   const css = `
   .swiper {
     width: 50%;
@@ -49,6 +52,55 @@ export const CardSwipe: React.FC<CarouselProps> = ({
   }
   
   `
+
+  if (isLoading) {
+    return (
+      <section className="w-full space-y-4">
+        <div className="mx-auto w-full max-w-xl rounded-[24px] border border-black/5 p-2 shadow-sm">
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neutral-800 mx-auto mb-4"></div>
+              <p className="text-neutral-600">Carregando livros...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section className="w-full space-y-4">
+        <div className="mx-auto w-full max-w-xl rounded-[24px] border border-red-200 p-2 shadow-sm">
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center text-red-600">
+              <p className="font-semibold">Erro ao carregar livros</p>
+              <p className="text-sm mt-2">Tente novamente mais tarde</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <section className="w-full space-y-4">
+        <div className="mx-auto w-full max-w-xl rounded-[24px] border border-black/5 p-2 shadow-sm">
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center text-neutral-600">
+              <SparklesIcon className="mx-auto mb-4 h-12 w-12 text-neutral-400" />
+              <p className="font-semibold">Nenhum livro encontrado</p>
+              <p className="text-sm mt-2">Adicione alguns livros para vê-los aqui</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const currentBook = data[currentBookIndex] || data[0]
+
   return (
     <section className="w-ace-y-4">
       <style>{css}</style>
@@ -64,11 +116,11 @@ export const CardSwipe: React.FC<CarouselProps> = ({
           <div className="flex flex-col justify-center pb-2 pl-4 pt-14 md:items-center">
             <div className="flex gap-2">
               <div>
-                <h3 className="text-4xl opacity-85 font-bold tracking-tight">
-                  Titulo do livro
+                <h3 className="text-4xl opacity-85 font-bold tracking-tight line-clamp-2">
+                  {currentBook.title}
                 </h3>
-                <p className="flex items-center gap-1">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste dicta minus fuga excepturi ipsum, et odio similique illum molestias est vel iure, eius velit sint labore ad eligendi. Corrupti, unde.
+                <p className="flex items-center gap-1 line-clamp-4">
+                  {currentBook.description}
                 </p>
               </div>
             </div>
@@ -91,28 +143,28 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                 }}
                 modules={[EffectCards, Autoplay, Pagination, Navigation]}
               >
-                {images.map((image, index) => (
+                {data.map((book: Book, index: number) => (
                   <SwiperSlide key={index}>
                     <div className="size-full rounded-3xl">
                       <Image
-                        src={image.src}
+                        src={book.coverUrl}
                         width={400}
                         height={400}
                         className="size-full rounded-xl"
-                        alt={image.alt}
+                        alt={`Capa do livro ${book.title} de ${book.author}`}
                       />
                     </div>
                   </SwiperSlide>
                 ))}
-                {images.map((image, index) => (
+                {data.map((book: Book, index: number) => (
                   <SwiperSlide key={index}>
                     <div className="size-full rounded-3xl">
                       <Image
-                        src={image.src}
+                        src={book.coverUrl}
                         width={100}
                         height={100}
                         className="size-full rounded-xl"
-                        alt={image.alt}
+                        alt={`Capa do livro ${book.title} de ${book.author}`}
                       />
                     </div>
                   </SwiperSlide>
