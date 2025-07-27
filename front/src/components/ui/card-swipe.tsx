@@ -13,7 +13,7 @@ import { SparklesIcon } from "lucide-react"
 import { Autoplay, Navigation, Pagination } from "swiper/modules"
 
 import { Badge } from "@/components/ui/badge"
-import useBooks from "@/hooks/use-books"
+import { useBooks } from "@/hooks/books"
 import { Book } from "@/types/book.type"
 
 interface CarouselProps {

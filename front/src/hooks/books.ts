@@ -11,3 +11,12 @@ export function useBooks() {
     },
   })
 }
+
+export function useCreateBook() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ data }: { data: CreateBookData }) => api.post(`/books`, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['books'] })
+  })
+}

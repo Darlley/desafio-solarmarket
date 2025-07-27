@@ -48,6 +48,8 @@ import {
 import CreateBookForm from "./create-books.form"
 import { Book } from "@/types/book.type"
 import { useBooks, useCreateBook } from "@/hooks/books"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { ShinyButton } from "./magicui/shiny-button"
 
 const columns: ColumnDef<Book>[] = [
   {
@@ -217,7 +219,24 @@ export function ListBooksTable() {
           }
           className="max-w-sm"
         />
-        <CreateBookForm />
+        <Dialog>
+          <DialogTrigger asChild>
+            <ShinyButton className="text-nowrap">
+              Criar livro
+            </ShinyButton>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                Cadastrar Novo Livro
+              </DialogTitle>
+              <DialogDescription>
+                Preencha os dados para cadastrar um novo livro na biblioteca"
+              </DialogDescription>
+            </DialogHeader>
+            <CreateBookForm />
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
