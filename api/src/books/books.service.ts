@@ -1,7 +1,7 @@
-import { Body, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from './entities/book.entity';
 import { Repository } from 'typeorm';
 
@@ -9,27 +9,43 @@ import { Repository } from 'typeorm';
 export class BooksService {
   constructor(
     @InjectRepository(Book)
-    private booksRepository: Repository<Book>,
+    private readonly bookRepository: Repository<Book>,
   ) { }
 
   create(createBookDto: CreateBookDto) {
-    return this.booksRepository.create(createBookDto)
+    const book = this.bookRepository.create(createBookDto);
+    return this.bookRepository.save(book);
   }
 
   findAll() {
-    console.log("esotu aqui")
-    return this.booksRepository.find()
+    return this.bookRepository.find()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} book`;
+  findOne(id: string) {
+    const book = this.bookRepository.findOneBy({ id })
+    if(!book){
+      throw new Error('Livro não encontrado');
+    }
+    return book;
   }
 
-  update(id: number, updateBookDto: UpdateBookDto) {
-    return `This action updates a #${id} book`;
+  async update(id: string, updateBookDto: UpdateBookDto) {
+    const book = await this.bookRepository.findOneBy({ id })
+    
+    if(!book){
+      throw new NotFoundException('Livro não encontrado');
+    }
+
+    const updatedBook = this.bookRepository.merge(book, updateBookDto);
+    return await this.bookRepository.save(updatedBook);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} book`;
+  async remove(id: string) {
+    const book = await this.bookRepository.findOneBy({ id });
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+
+    return await this.bookRepository.remove(book);
   }
 }

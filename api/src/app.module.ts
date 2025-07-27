@@ -12,12 +12,13 @@ import { Book } from './books/entities/book.entity';
       type: 'mysql', // Change to your database type
       host: 'localhost',
       port: 3306,
-      username: '',
-      password: '',
-      database: '',
+      username: 'root',
+      password: 'admin',
+      database: 'solarmarket',
       entities: [Book],
       synchronize: true, // Set to false in production
     }),
+    
   ],
   controllers: [AppController],
   providers: [AppService],
