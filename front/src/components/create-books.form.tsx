@@ -13,36 +13,18 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-import { z } from "zod"
+import { bookSchema, BookType } from "@/schemas/book"
+
 import { Cropper, CropperCropArea, CropperDescription, CropperImage } from "./ui/cropper"
-import { ShinyButton } from "./magicui/shiny-button"
 import { useCreateBook } from "@/hooks/books"
 
-export const bookSchema = z.object({
-  title: z.string().min(1, "Título é obrigatório."),
-  author: z.string().min(3, "Autor deve conter pelo menos 3 caracteres."),
-  description: z.string().optional(),
-  isbn: z.string().regex(/^\d{13}$/, "ISBN deve conter 13 dígitos numéricos."),
-  publicationDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-    message: "Data de publicação inválida.",
-  }),
-  genre: z.string().min(3, "Gênero é obrigatório."),
-  language: z.string().min(2, "Idioma é obrigatório."),
-  coverUrl: z.string().url("URL da capa inválida."),
-})
-
-export type BookFormData = z.infer<typeof bookSchema>
-
 interface BookEditorProps {
-  initialData?: Partial<BookFormData>
+  initialData?: Partial<BookType>
   isEditing?: boolean
   onSuccess?: () => void
 }
 
 export default function CreateBookForm({ initialData, isEditing = false, onSuccess }: BookEditorProps) {
-  const [date, setDate] = useState<Date | undefined>(
-    initialData?.publicationDate ? new Date(initialData.publicationDate) : undefined,
-  )
   const [coverType, setCoverType] = useState<"upload" | "url">("url")
   const [previewImage, setPreviewImage] = useState<string>("")
 
@@ -54,7 +36,7 @@ export default function CreateBookForm({ initialData, isEditing = false, onSucce
     reset,
     setValue,
     formState: { errors, isSubmitting }
-  } = useForm<BookFormData>({
+  } = useForm<BookType>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
       title: initialData?.title || "",
@@ -80,12 +62,11 @@ export default function CreateBookForm({ initialData, isEditing = false, onSucce
 
   const resetForm = () => {
     reset()
-    setDate(undefined)
     setPreviewImage("")
     editor?.commands.setContent("<p>Digite a descrição do livro...</p>")
   }
 
-  const onSubmit = async (data: BookFormData) => {
+  const onSubmit = async (data: BookType) => {
     try {
       const bookData = {
         ...data,

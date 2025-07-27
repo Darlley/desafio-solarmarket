@@ -14,7 +14,7 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules"
 
 import { Badge } from "@/components/ui/badge"
 import { useBooks } from "@/hooks/books"
-import { Book } from "@/types/book.type"
+import { BookType } from "@/schemas/book"
 
 interface CarouselProps {
   images?: { src: string; alt: string }[]
@@ -143,7 +143,7 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                 }}
                 modules={[EffectCards, Autoplay, Pagination, Navigation]}
               >
-                {data.map((book: Book, index: number) => (
+                {data.map((book: BookType, index: number) => (
                   <SwiperSlide key={index}>
                     <div className="size-full rounded-3xl">
                       <Image
@@ -156,7 +156,7 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                     </div>
                   </SwiperSlide>
                 ))}
-                {data.map((book: Book, index: number) => (
+                {data.map((book: BookType, index: number) => (
                   <SwiperSlide key={index}>
                     <div className="size-full rounded-3xl">
                       <Image

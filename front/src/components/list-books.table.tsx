@@ -46,12 +46,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import CreateBookForm from "./create-books.form"
-import { Book } from "@/types/book.type"
+import { BookType } from "@/schemas/book"
 import { useBooks, useCreateBook } from "@/hooks/books"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { ShinyButton } from "./magicui/shiny-button"
 
-const columns: ColumnDef<Book>[] = [
+const columns: ColumnDef<BookType>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => {
