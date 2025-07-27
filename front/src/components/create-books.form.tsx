@@ -12,7 +12,6 @@ import { ptBR } from "date-fns/locale"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -20,9 +19,9 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 import { z } from "zod"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { Cropper, CropperCropArea, CropperDescription, CropperImage } from "../ui/cropper"
-import { ShinyButton } from "../magicui/shiny-button"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { Cropper, CropperCropArea, CropperDescription, CropperImage } from "./ui/cropper"
+import { ShinyButton } from "./magicui/shiny-button"
 
 export const bookSchema = z.object({
   title: z.string().min(1, "Título é obrigatório."),
@@ -45,7 +44,7 @@ interface BookEditorProps {
   onSave?: (data: Book) => void
 }
 
-export default function CreateOrEditBookForm({ initialData, isEditing = false, onSave }: BookEditorProps) {
+export default function CreateBookForm({ initialData, isEditing = false, onSave }: BookEditorProps) {
 
   const [date, setDate] = useState<Date | undefined>(
     initialData?.publicationDate ? new Date(initialData.publicationDate) : undefined,
