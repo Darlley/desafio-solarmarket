@@ -13,10 +13,9 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Trash } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Trash, SquarePen } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,7 +44,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import CreateBookForm from "./create-books.form"
+import BookForm from "./book.form"
 import { BookType } from "@/schemas/book"
 import { useBooks, useCreateBook } from "@/hooks/books"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
@@ -155,6 +154,23 @@ const columns: ColumnDef<BookType>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0"><SquarePen /></Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>
+                  Editar Livro
+                </DialogTitle>
+                <DialogDescription>
+                  Preencha os dados para editar o livro na biblioteca"
+                </DialogDescription>
+              </DialogHeader>
+              <BookForm isEditing initialData={book} />
+            </DialogContent>
+          </Dialog>
+
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0 text-red-500"><Trash /></Button>
@@ -234,7 +250,7 @@ export function ListBooksTable() {
                 Preencha os dados para cadastrar um novo livro na biblioteca"
               </DialogDescription>
             </DialogHeader>
-            <CreateBookForm />
+            <BookForm />
           </DialogContent>
         </Dialog>
       </div>

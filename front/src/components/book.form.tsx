@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { bookSchema, BookType } from "@/schemas/book"
 
 import { Cropper, CropperCropArea, CropperDescription, CropperImage } from "./ui/cropper"
-import { useCreateBook } from "@/hooks/books"
+import { useCreateBook, useUpdateBook } from "@/hooks/books"
 
 interface BookEditorProps {
   initialData?: Partial<BookType>
@@ -24,11 +24,12 @@ interface BookEditorProps {
   onSuccess?: () => void
 }
 
-export default function CreateBookForm({ initialData, isEditing = false, onSuccess }: BookEditorProps) {
+export default function BookForm({ initialData, isEditing = false, onSuccess }: BookEditorProps) {
   const [coverType, setCoverType] = useState<"upload" | "url">("url")
   const [previewImage, setPreviewImage] = useState<string>("")
 
   const createBookMutation = useCreateBook()
+  const updateBookMutation = useUpdateBook()
 
   const {
     control,
@@ -59,7 +60,6 @@ export default function CreateBookForm({ initialData, isEditing = false, onSucce
     },
   })
 
-
   const resetForm = () => {
     reset()
     setPreviewImage("")
@@ -73,13 +73,25 @@ export default function CreateBookForm({ initialData, isEditing = false, onSucce
         publicationDate: new Date(data.publicationDate).toISOString()
       }
 
-      await createBookMutation.mutateAsync({
-        data: bookData
-      })
+      if (isEditing && initialData && initialData.id) {
+        await updateBookMutation.mutateAsync({
+          id: initialData.id,
+          data: bookData
+        })
 
-      toast.success("Livro cadastrado com sucesso!", {
-        description: `"${data.title}" foi adicionado à biblioteca.`
-      })
+        toast.success("Livro editado com sucesso!", {
+          description: `"${data.title}" foi editado.`
+        })
+
+      } else {
+        await createBookMutation.mutateAsync({
+          data: bookData
+        })
+
+        toast.success("Livro cadastrado com sucesso!", {
+          description: `"${data.title}" foi adicionado à biblioteca.`
+        })
+      }
 
       resetForm()
       onSuccess?.()
@@ -132,10 +144,8 @@ export default function CreateBookForm({ initialData, isEditing = false, onSucce
     }
   }
 
-  // Função para capturar dados da imagem cortada
   const handleCropChange = (cropData: any) => {
     if (cropData && cropData.canvas) {
-      // Converter canvas para base64 ou blob
       const croppedImageUrl = cropData.canvas.toDataURL('image/jpeg', 0.8)
       setValue("coverUrl", croppedImageUrl)
     }

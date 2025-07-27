@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 export const bookSchema = z.object({
+  id: z.string().optional(),
   title: z.string().min(1, "Título é obrigatório."),
   author: z.string().min(3, "Autor deve conter pelo menos 3 caracteres."),
   description: z.string().optional(),
