@@ -50,10 +50,72 @@ import { useBooks, useCreateBook, useDeleteBook } from "@/hooks/books"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { ShinyButton } from "./magicui/shiny-button"
 
-
 import { toast } from 'sonner'
 
 const columns: ColumnDef<BookType>[] = [
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const book = row.original
+
+      const deleteBookMutation = useDeleteBook()
+
+      async function deleteBook(id: string) {
+        try {
+          await deleteBookMutation.mutateAsync({ id })
+
+          toast.success("Livro deletado com sucesso!", {
+            description: `O livro "${book.title}" foi removido da biblioteca.`
+          })
+        } catch (error: unknown) {
+          console.log(error)
+          toast.error("Erro ao deletar o livro", {
+            description: "Tente novamente em alguns instantes."
+          })
+        }
+      }
+
+      return (
+        <div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0"><SquarePen /></Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>
+                  Editar Livro
+                </DialogTitle>
+                <DialogDescription>
+                  Preencha os dados para editar o livro na biblioteca"
+                </DialogDescription>
+              </DialogHeader>
+              <BookForm isEditing initialData={book} />
+            </DialogContent>
+          </Dialog>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0 text-red-500">{deleteBookMutation.isPending ? <LoaderCircle className="animate-spin" /> : <Trash />}</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação irá excluir permanentemente o livro.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={async () => book.id && deleteBook(book.id)}>{deleteBookMutation.isPending ? "Deletando" : "Continue"}</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )
+    },
+  },
   {
     accessorKey: "title",
     header: ({ column }) => {
@@ -125,69 +187,7 @@ const columns: ColumnDef<BookType>[] = [
     header: "Idioma",
     cell: ({ row }) => <div>{row.getValue("language")}</div>,
   },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const book = row.original
-
-      const deleteBookMutation = useDeleteBook()
-
-      async function deleteBook(id: string) {
-        try {
-          await deleteBookMutation.mutateAsync({ id })
-
-          toast.success("Livro deletado com sucesso!", {
-            description: `O livro "${book.title}" foi removido da biblioteca.`
-          })
-        } catch (error: unknown) {
-          console.log(error)
-          toast.error("Erro ao deletar o livro", {
-            description: "Tente novamente em alguns instantes."
-          })
-        }
-      }
-
-      return (
-        <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0"><SquarePen /></Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
-                  Editar Livro
-                </DialogTitle>
-                <DialogDescription>
-                  Preencha os dados para editar o livro na biblioteca"
-                </DialogDescription>
-              </DialogHeader>
-              <BookForm isEditing initialData={book} />
-            </DialogContent>
-          </Dialog>
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-red-500">{deleteBookMutation.isPending ? <LoaderCircle className="animate-spin" /> : <Trash />}</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Esta ação irá excluir permanentemente o livro.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={async () => book.id && deleteBook(book.id)}>{deleteBookMutation.isPending ? "Deletando" : "Continue"}</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      )
-    },
-  },
+  
 ]
 
 export function ListBooksTable() {

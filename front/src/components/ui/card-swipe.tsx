@@ -3,27 +3,23 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import { Swiper, SwiperSlide } from "swiper/react"
-
-import "swiper/css/effect-cards"
-import { EffectCards } from "swiper/modules"
-
 import "swiper/css"
-import "swiper/css/effect-coverflow"
-import { SparklesIcon } from "lucide-react"
-import { Autoplay, Navigation, Pagination } from "swiper/modules"
+import "swiper/css/effect-cards"
+import { EffectCards, Autoplay, Navigation, Pagination } from "swiper/modules"
 
+import { SparklesIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useBooks } from "@/hooks/books"
 import { BookType } from "@/schemas/book"
 
+import DOMPurify from "isomorphic-dompurify"
+
 interface CarouselProps {
-  images?: { src: string; alt: string }[]
   autoplayDelay?: number
   slideShadows: boolean
 }
 
 export const CardSwipe: React.FC<CarouselProps> = ({
-  images,
   autoplayDelay = 1500,
   slideShadows = false,
 }) => {
@@ -31,26 +27,25 @@ export const CardSwipe: React.FC<CarouselProps> = ({
   const [currentBookIndex, setCurrentBookIndex] = useState(0)
 
   const css = `
-  .swiper {
-    width: 50%;
-    padding-bottom: 50px;
-  }
-  
-  .swiper-slide {
-   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 18px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #fff;
-  }
-  
-  .swiper-slide img {
-    display: block;
-    width: 100%;
-  }
-  
+    .swiper {
+      width: 50%;
+      padding-bottom: 50px;
+    }
+    
+    .swiper-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+    }
+    
+    .swiper-slide img {
+      display: block;
+      width: 100%;
+    }
   `
 
   if (isLoading) {
@@ -116,12 +111,17 @@ export const CardSwipe: React.FC<CarouselProps> = ({
           <div className="flex flex-col justify-center pb-2 pl-4 pt-14 md:items-center">
             <div className="flex gap-2">
               <div>
-                <h3 className="text-4xl opacity-85 font-bold tracking-tight line-clamp-2">
+                <h3 className="text-4xl opacity-85 font-bold tracking-tight line-clamp-3">
                   {currentBook.title}
                 </h3>
-                <p className="flex items-center gap-1 line-clamp-4">
-                  {currentBook.description}
-                </p>
+                {currentBook.description && (
+                  <p
+                    className="flex items-center gap-1 line-clamp-4 text-sm md:text-base"
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(currentBook.description.slice(0, 400)),
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -137,7 +137,9 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                 grabCursor={true}
                 loop={true}
                 slidesPerView={"auto"}
-                rewind={true}
+                onSlideChange={swiper => {
+                  setCurrentBookIndex(swiper.realIndex)
+                }}
                 cardsEffect={{
                   slideShadows: slideShadows,
                 }}
@@ -150,20 +152,7 @@ export const CardSwipe: React.FC<CarouselProps> = ({
                         src={book.coverUrl}
                         width={400}
                         height={400}
-                        className="size-full rounded-xl"
-                        alt={`Capa do livro ${book.title} de ${book.author}`}
-                      />
-                    </div>
-                  </SwiperSlide>
-                ))}
-                {data.map((book: BookType, index: number) => (
-                  <SwiperSlide key={index}>
-                    <div className="size-full rounded-3xl">
-                      <Image
-                        src={book.coverUrl}
-                        width={100}
-                        height={100}
-                        className="size-full rounded-xl"
+                        className="size-full rounded-xl object-cover"
                         alt={`Capa do livro ${book.title} de ${book.author}`}
                       />
                     </div>
