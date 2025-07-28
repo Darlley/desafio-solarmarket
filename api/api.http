@@ -1,0 +1,47 @@
+@baseUrl = http://localhost:3000
+
+
+###
+
+GET {{baseUrl}} HTTP/1.1
+
+###
+
+GET {{baseUrl}}/books HTTP/1.1
+
+###
+
+# @name createdBook
+POST {{baseUrl}}/books HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "O Senhor dos Anéis: A Sociedade do Anel",
+  "author": "J.R.R. Tolkien",
+  "isbn": "9788595084759",
+  "publicationDate": "2019-03-19T14:30:00-03:00",
+  "genre": "fantasia",
+  "language": "pt-br",
+  "coverUrl": "https://m.media-amazon.com/images/I/81hCVEC0ExL._SY466_.jpg"
+}
+
+###
+@bookId = {{ createdBook.response.body.id }}
+###
+
+GET {{baseUrl}}/books/{{bookId}} HTTP/1.1
+
+###
+
+# @name updatedBook
+
+PATCH {{baseUrl}}/books/{{bookId}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "O volume inicial de O Senhor dos Anéis, lançado originalmente em julho de 1954, foi o primeiro grande épico de fantasia moderno, conquistando milhões de leitores e se tornando o padrão de referência para todas as outras obras do gênero até hoje."
+}
+
+###
+
+DELETE {{baseUrl}}/books/{{bookId}} HTTP/1.1
