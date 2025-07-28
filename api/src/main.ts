@@ -1,25 +1,27 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // remove campos não especificados
-      forbidNonWhitelisted: true, // rejeita se vier campo extra
-      transform: true, // transforma tipos primitivos
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
-  // Permitir requisições do frontend na porta 3001
   app.enableCors({
     origin: 'http://localhost:3001',
     methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
     credentials: true,
   });
 
-  await app.listen(3000);
+  const port = configService.get('PORT') || 3000;
+  await app.listen(port);
 }
 bootstrap();
