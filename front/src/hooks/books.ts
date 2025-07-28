@@ -25,19 +25,28 @@ export function useUpdateBook() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ 
+    mutationFn: async ({
       id, data
-    }: { 
+    }: {
       id: string;
       data: UpdateBookType;
     }) => {
       const response = await api.patch(`/books/${id}`, data)
       return response.data
     },
-    
+
     onSuccess: (updatedBook) => {
       queryClient.setQueryData(['books', updatedBook.id], updatedBook)
       queryClient.invalidateQueries({ queryKey: ['books'] })
     },
+  })
+}
+
+export function useDeleteBook() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id }: { id: string }) => api.delete(`/books/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['books'] })
   })
 }

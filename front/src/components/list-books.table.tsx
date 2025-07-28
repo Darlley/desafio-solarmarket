@@ -13,7 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Trash, SquarePen } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Trash, SquarePen, LoaderCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -46,9 +46,12 @@ import {
 } from "@/components/ui/table"
 import BookForm from "./book.form"
 import { BookType } from "@/schemas/book"
-import { useBooks, useCreateBook } from "@/hooks/books"
+import { useBooks, useCreateBook, useDeleteBook } from "@/hooks/books"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { ShinyButton } from "./magicui/shiny-button"
+
+
+import { toast } from 'sonner'
 
 const columns: ColumnDef<BookType>[] = [
   {
@@ -128,32 +131,25 @@ const columns: ColumnDef<BookType>[] = [
     cell: ({ row }) => {
       const book = row.original
 
+      const deleteBookMutation = useDeleteBook()
+
+      async function deleteBook(id: string) {
+        try {
+          await deleteBookMutation.mutateAsync({ id })
+
+          toast.success("Livro deletado com sucesso!", {
+            description: `O livro "${book.title}" foi removido da biblioteca.`
+          })
+        } catch (error: unknown) {
+          console.log(error)
+          toast.error("Erro ao deletar o livro", {
+            description: "Tente novamente em alguns instantes."
+          })
+        }
+      }
+
       return (
         <div>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(book.isbn)}
-              >
-                Copiar ISBN
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Ver detalhes</DropdownMenuItem>
-              <DropdownMenuItem>Editar livro</DropdownMenuItem>
-              <DropdownMenuItem >
-
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0"><SquarePen /></Button>
@@ -173,7 +169,7 @@ const columns: ColumnDef<BookType>[] = [
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 text-red-500"><Trash /></Button>
+              <Button variant="ghost" className="h-8 w-8 p-0 text-red-500">{deleteBookMutation.isPending ? <LoaderCircle className="animate-spin" /> : <Trash />}</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -184,7 +180,7 @@ const columns: ColumnDef<BookType>[] = [
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction>Continue</AlertDialogAction>
+                <AlertDialogAction onClick={async () => book.id && deleteBook(book.id)}>{deleteBookMutation.isPending ? "Deletando" : "Continue"}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -303,30 +299,6 @@ export function ListBooksTable() {
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Próximo
-          </Button>
-        </div>
       </div>
     </div>
   )
